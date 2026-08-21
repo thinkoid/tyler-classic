@@ -15,7 +15,7 @@ static size_t g_margin = 2;
 static const char *g_fontname = "Iosevka Light:size=12";
 
 static const char *g_colors[] = {
-        "#444444", "#222222", "#BBBBBB", "#93a660", "#8c9440", "#EEEEEE"
+        "#444444", "#222222", "#BBBBBB", "#93a660", "#4f5b3f", "#EEEEEE"
 };
 
 static const int g_cursors[] = {
