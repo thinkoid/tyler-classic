@@ -17,6 +17,7 @@ const int *config_cursors(void);
 size_t config_cursors_size(void);
 
 const char **config_termcmd(void);
+const char **config_screenshotcmd(void);
 
 size_t config_margin(void);
 

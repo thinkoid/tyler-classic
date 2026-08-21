@@ -1439,6 +1439,11 @@ static int spawn_terminal(void)
         return spawn((char **)config_termcmd());
 }
 
+static int spawn_screenshot(void)
+{
+        return spawn((char **)config_screenshotcmd());
+}
+
 static int current_screen_ordinal(void)
 {
         int i = 0;
@@ -1918,6 +1923,7 @@ static struct keycmd g_keycmds[] = {
         { MODKEY,               XK_Return,  zoom               },
         { MODKEY | ShiftMask,   XK_Return,  spawn_terminal     },
         { MODKEY,               XK_p,       spawn_program      },
+        { 0,                    XK_Print,   spawn_screenshot   },
         { MODKEY,               XK_b,       toggle_bar         },
         { MODKEY | ShiftMask,   XK_Left,    move_focus_left    },
         { MODKEY | ShiftMask,   XK_Right,   move_focus_right   },

@@ -26,6 +26,14 @@ static const char *g_termcmd[] = {
         "st", 0
 };
 
+/* import(1) has no shell of its own; the date stamp needs one. */
+static const char *g_screenshotcmd[] = {
+        "sh", "-c",
+        "import -window root "
+        "\"$HOME/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png\"",
+        0
+};
+
 static int g_snap = 5;
 /* clang-format on */
 
@@ -62,6 +70,11 @@ size_t config_cursors_size(void)
 const char **config_termcmd(void)
 {
         return g_termcmd;
+}
+
+const char **config_screenshotcmd(void)
+{
+        return g_screenshotcmd;
 }
 
 int config_showbar(void)
