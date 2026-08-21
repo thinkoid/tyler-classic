@@ -9,10 +9,14 @@
 #include <fontconfig/fontconfig.h>
 
 XftFont *font(void);
+XftFont *bold_font(void);
+
 XftFont *make_font(const char *);
+XftFont *make_bold_font(const char *);
 
 void free_font(void);
 
 #define FNT (font())
+#define FNT_BOLD (bold_font())
 
 #endif /* WM_FONT_H */

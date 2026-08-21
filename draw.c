@@ -71,7 +71,8 @@ void fill(struct draw_surface *surf, const struct rect *r, XftColor *bg)
         XFillRectangle(DPY, surf->drw, GC_, r->x, r->y, r->w, r->h);
 }
 
-void draw_text(struct draw_surface *surf, const char *s, int x, XftColor *fg)
+void draw_text(struct draw_surface *surf, const char *s, int x, XftColor *fg,
+               XftFont *fnt)
 {
         int a, d, h, y;
         struct rect g = { 0 };
@@ -82,27 +83,13 @@ void draw_text(struct draw_surface *surf, const char *s, int x, XftColor *fg)
         geometry_of(surf->drw, &g);
         ASSERT (g.x <= x && x < g.x + g.w);
 
-        a = FNT->ascent;
-        d = FNT->descent;
+        a = fnt->ascent;
+        d = fnt->descent;
         h = a + d;
 
         y = g.y + (g.h / 2) - (h / 2) + a;
 
-        XftDrawStringUtf8(surf->xft, fg, FNT, x, y, (XftChar8*)s, strlen(s));
-}
-
-void draw_rect(struct draw_surface *surf,
-               const struct rect *r, XftColor *fg, int fill)
-{
-        struct rect g = { 0 };
-        geometry_of(surf->drw, &g);
-
-        XSetForeground(DPY, GC_, fg->pixel);
-
-        if (fill)
-                XFillRectangle(DPY, surf->drw, GC_, r->x, r->y, r->w, r->h);
-        else
-                XDrawRectangle(DPY, surf->drw, GC_, r->x, r->y, r->w, r->h);
+        XftDrawStringUtf8(surf->xft, fg, fnt, x, y, (XftChar8*)s, strlen(s));
 }
 
 void copy(struct draw_surface *surf,

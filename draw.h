@@ -21,10 +21,7 @@ void fill(struct draw_surface * surf,
           const struct rect *r, XftColor *bg);
 
 void draw_text(struct draw_surface *surf,
-               const char *s, int x, XftColor *fg);
-
-void draw_rect(struct draw_surface *surf,
-               const struct rect *r, XftColor *fg, int fill);
+               const char *s, int x, XftColor *fg, XftFont *fnt);
 
 void copy(struct draw_surface *surf,
           Drawable drw, int x, int y, int w, int h,

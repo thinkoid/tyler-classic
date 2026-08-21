@@ -9,6 +9,7 @@
 #include <X11/cursorfont.h>
 
 const char *config_fontname(void);
+const char *config_boldfontname(void);
 
 const char **config_colors(void);
 size_t config_colors_size(void);

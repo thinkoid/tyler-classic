@@ -256,51 +256,31 @@ static int text_width(const char *text, XftFont* font) {
 }
 
 static int drawtag(struct screen *s, const char *tag,
-                   int x, int selected, int filled,
+                   int x, int occupied,
                    XftColor *fg, XftColor *bg)
 {
-        const int w = text_width(tag, FNT);
-
-        const int a = FNT->ascent;
-        const int d = FNT->descent;
-
-        const int h = a + d;
-
         /*
-         *     +---------- client window indicator
-         *     |      +--- tag
-         *     |      |
-         *     v      v
-         *  +-----+-------+
-         *  |  □ |  /|   |
-         *  |     |   |   |
-         *  +-----+-------+
-         *  | <-> | <---> |
-         *    h/2     w
+         * Occupancy shows as weight (bold tag), not an indicator
+         * square, so the cell needs only a quarter-height pad a side.
          */
+        XftFont *fnt = occupied ? FNT_BOLD : FNT;
+
+        const int w = text_width(tag, fnt);
+        const int h = FNT->ascent + FNT->descent;
+
+        const int pad = h / 4;
+
         struct rect r = { 0 };
 
         r.x = x;
         r.y = s->r.y;
-        r.w = h + w;
+        r.w = w + 2 * pad;
         r.h = s->bh;
 
         fill(DRW, &r, bg);
+        draw_text(DRW, tag, x + pad, fg, fnt);
 
-        if (selected) {
-                struct rect q = { 0 };
-
-                q.x = r.x + 2;
-                q.y = r.y + 2;
-
-                q.w = q.h = h/4;
-
-                draw_rect(DRW, &q, fg, filled);
-        }
-
-        draw_text(DRW, tag, x += h/2, fg);
-
-        return x + w + h /2;
+        return x + w + 2 * pad;
 }
 
 static int drawtags(struct screen *s)
@@ -310,9 +290,7 @@ static int drawtags(struct screen *s)
         size_t i = 0;
         char tag[2] = { 0 };
 
-        struct client *c = current_screen->current;
-
-        const int cct = c ? state_of(c)->tags : 0;
+        struct client *c;
         unsigned occ = 0, urg = 0;
 
         for (c = s->head; c; c = c->next) {
@@ -336,10 +314,7 @@ static int drawtags(struct screen *s)
 
                 tag[0] = i + 1 + '0';
 
-                x = drawtag(s, tag, x,
-                            occ & (1U << i),  /* selected */
-                            cct & (1U << i),  /* filled rectangle */
-                            fg, bg);
+                x = drawtag(s, tag, x, occ & (1U << i), fg, bg);
         }
 
         return x;
@@ -382,7 +357,7 @@ static int drawstatus(struct screen *s, int left)
         }
 
         fill(DRW, &r, XFT_NORMAL_BG);
-        draw_text(DRW, pbuf, r.x + pad, XFT_NORMAL_FG);
+        draw_text(DRW, pbuf, r.x + pad, XFT_NORMAL_FG, FNT);
 
         if (pbuf != buf)
                 free(pbuf);
@@ -418,7 +393,7 @@ static void drawtitle(struct screen *s, int left, int right)
         n = strlen(pbuf);
         for (; n && r.w - pad < text_width(pbuf, FNT); pbuf[--n] = 0) ;
 
-        draw_text(DRW, pbuf, left + pad, XFT_NORMAL_FG);
+        draw_text(DRW, pbuf, left + pad, XFT_NORMAL_FG, FNT);
 
         if (pbuf != buf)
                 free(pbuf);
@@ -2384,6 +2359,7 @@ static void init(void)
         atexit(free_cursors);
 
         make_font(config_fontname());
+        make_bold_font(config_boldfontname());
         atexit(free_font);
 
         init_error_handling();

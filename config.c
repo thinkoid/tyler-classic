@@ -18,6 +18,11 @@ static size_t g_margin = 2;
  */
 static const char *g_fontname = "IosevkaTerm Nerd Font:style=Light:size=12";
 
+/* Occupied tags render bold in the bar; ExtraBold to carry against
+ * the Light base face. */
+static const char *g_boldfontname =
+        "IosevkaTerm Nerd Font:style=ExtraBold:size=12";
+
 static const char *g_colors[] = {
         "#444444", "#222222", "#BBBBBB", "#93a660", "#4f5b3f", "#EEEEEE"
 };
@@ -49,6 +54,11 @@ static int g_snap = 5;
 const char *config_fontname(void)
 {
         return g_fontname;
+}
+
+const char *config_boldfontname(void)
+{
+        return g_boldfontname;
 }
 
 const char **config_colors(void)
