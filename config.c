@@ -12,7 +12,11 @@ static float g_master_ratio = .5f;
 
 static size_t g_margin = 2;
 
-static const char *g_fontname = "Iosevka Light:size=12";
+/*
+ * The nerd-patched Iosevka: same face, plus the icon glyphs
+ * tyler-status uses. One string feeds the bar, dmenu, and st.
+ */
+static const char *g_fontname = "IosevkaTerm Nerd Font:style=Light:size=12";
 
 static const char *g_colors[] = {
         "#444444", "#222222", "#BBBBBB", "#93a660", "#4f5b3f", "#EEEEEE"

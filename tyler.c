@@ -357,7 +357,7 @@ static char *title_of(Window win, char *buf, size_t len)
 
 static int drawstatus(struct screen *s, int left)
 {
-        int w;
+        int w, pad;
         struct rect r;
 
         char buf[512] = { 0 }, *pbuf = buf;
@@ -366,7 +366,8 @@ static int drawstatus(struct screen *s, int left)
         if (0 == (pbuf = title_of(ROOT, buf, n)))
                 strcpy((pbuf = buf), "tyler");
 
-        w = text_width(pbuf, FNT);
+        pad = text_width(" ", FNT);
+        w = text_width(pbuf, FNT) + pad;
 
         r.x = s->r.x + s->r.w - w;
         r.y = 0;
@@ -377,11 +378,11 @@ static int drawstatus(struct screen *s, int left)
                 r.w -= left - r.x; r.x = left;
 
                 n = strlen(pbuf);
-                for (; n && r.w < text_width(pbuf, FNT); pbuf[--n] = 0) ;
+                for (; n && r.w - pad < text_width(pbuf, FNT); pbuf[--n] = 0) ;
         }
 
         fill(DRW, &r, XFT_NORMAL_BG);
-        draw_text(DRW, pbuf, r.x, XFT_NORMAL_FG);
+        draw_text(DRW, pbuf, r.x + pad, XFT_NORMAL_FG);
 
         if (pbuf != buf)
                 free(pbuf);
@@ -391,6 +392,7 @@ static int drawstatus(struct screen *s, int left)
 
 static void drawtitle(struct screen *s, int left, int right)
 {
+        int pad;
         struct client *c;
 
         char buf[512], *pbuf = buf;
@@ -411,10 +413,12 @@ static void drawtitle(struct screen *s, int left, int right)
 
         fill(DRW, &r, s == current_screen ? XFT_SELECT_BG : XFT_NORMAL_BG);
 
-        n = strlen(pbuf);
-        for (; n && r.w < text_width(pbuf, FNT); pbuf[--n] = 0) ;
+        pad = text_width(" ", FNT);
 
-        draw_text(DRW, pbuf, left, XFT_NORMAL_FG);
+        n = strlen(pbuf);
+        for (; n && r.w - pad < text_width(pbuf, FNT); pbuf[--n] = 0) ;
+
+        draw_text(DRW, pbuf, left + pad, XFT_NORMAL_FG);
 
         if (pbuf != buf)
                 free(pbuf);
