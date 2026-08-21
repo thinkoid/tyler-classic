@@ -1027,9 +1027,19 @@ static void restack(struct screen *s)
         while (XCheckMaskEvent(DPY, EnterWindowMask, &ignore));
 }
 
+static void clear_urgent(struct client *c)
+{
+        if (is_urgent(c)) {
+                state_of(c)->urgent = 0;
+                reset_urgent(c->win);
+        }
+}
+
 static void set_client_focus(struct client *c)
 {
         ASSERT(c);
+
+        clear_urgent(c);
 
         if (!state_of(c)->noinput)
                 set_focus_property(c->win);
@@ -1988,7 +1998,10 @@ static void enter_fullscreen(struct client *c)
 
 static void mark_urgent(struct client *c)
 {
-        state_of(c)->urgent = 1;
+        if (!is_urgent(c)) {
+                state_of(c)->urgent = 1;
+                drawbar(c->screen);
+        }
 }
 
 /**********************************************************************/
@@ -2179,6 +2192,11 @@ static int property_notify_handler(XEvent *arg)
 
                 case XA_WM_HINTS:
                         update_client_wm_hints(c);
+
+                        if (c == current_screen->current)
+                                clear_urgent(c);
+
+                        drawbar(c->screen);
                         break;
                 default:
                         break;
