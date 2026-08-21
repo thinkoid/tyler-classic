@@ -1093,6 +1093,14 @@ static struct client *focus(struct client *c)
                 reset_focus_property();
         }
 
+        /*
+         * Keep the focus stack in true MRU order. Only manage() pushes
+         * otherwise, which would make stack_top "most recently mapped"
+         * and send focus to the wrong survivor when a client dies.
+         */
+        stack_pop(c);
+        stack_push_front(c);
+
         do_focus(c);
         drawbar(current_screen);
 
