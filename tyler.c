@@ -1924,6 +1924,7 @@ static struct keycmd g_keycmds[] = {
         { MODKEY | ShiftMask,   XK_Return,  spawn_terminal     },
         { MODKEY,               XK_p,       spawn_program      },
         { 0,                    XK_Print,   spawn_screenshot   },
+        { MODKEY,               XK_s,       spawn_screenshot   },
         { MODKEY,               XK_b,       toggle_bar         },
         { MODKEY | ShiftMask,   XK_Left,    move_focus_left    },
         { MODKEY | ShiftMask,   XK_Right,   move_focus_right   },

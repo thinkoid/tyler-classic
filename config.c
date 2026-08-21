@@ -22,8 +22,13 @@ static const int g_cursors[] = {
         XC_top_left_arrow, XC_sizing, XC_fleur
 };
 
+/*
+ * Stock st compiles in a pixelsize font, which ignores the server DPI;
+ * hand it our point-sized font so it scales like the bar and dmenu do.
+ * The slot is filled in config_termcmd from g_fontname.
+ */
 static const char *g_termcmd[] = {
-        "st", 0
+        "st", "-f", 0, 0
 };
 
 /* import(1) has no shell of its own; the date stamp needs one. */
@@ -69,6 +74,7 @@ size_t config_cursors_size(void)
 
 const char **config_termcmd(void)
 {
+        g_termcmd[2] = g_fontname;
         return g_termcmd;
 }
 
