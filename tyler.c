@@ -891,11 +891,21 @@ static void map_visible(void)
                         XMapWindow(DPY, c->win);
 }
 
+/*
+ * The pause/resume pair silences our own UnmapNotify, but the mask flip
+ * is not atomic against other connections: a foreign map or unmap
+ * processed between the two would execute unredirected, resp. unnoticed.
+ * The server grab keeps other connections' requests out of the interval.
+ */
 static void remap_quiet(void)
 {
+        XGrabServer(DPY);
+
         pause_propagate(ROOT, SubstructureNotifyMask);
         unmap_invisible();
         resume_propagate(ROOT, ROOTMASK);
+
+        XUngrabServer(DPY);
 
         map_visible();
 }
@@ -903,9 +913,13 @@ static void remap_quiet(void)
 static void unmap_quiet(struct client *c)
 {
         if (c) {
+                XGrabServer(DPY);
+
                 pause_propagate(ROOT, SubstructureNotifyMask);
                 XUnmapWindow(DPY, c->win);
                 resume_propagate(ROOT, ROOTMASK);
+
+                XUngrabServer(DPY);
         }
 }
 
