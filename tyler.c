@@ -1088,6 +1088,15 @@ static struct client *focus(struct client *c)
                 s = current_screen;
                 current_screen = c->screen;
 
+                /*
+                 * Record c as its screen's current, as the same-screen
+                 * branch does; without it a pointer crossing directly
+                 * into a window abutting the screen edge focuses c
+                 * while the screen still remembers the old current.
+                 */
+                if (is_floating(current_screen->current = c))
+                        XRaiseWindow(DPY, c->win);
+
                 drawbar(s);
 
                 reset_focus_property();
@@ -1164,8 +1173,16 @@ static void unmanage(struct client *c)
         if (is_tile(c))
                 retile(c->screen);
 
-        if (c == c->screen->current)
-                focus(stack_top(c->screen));
+        /*
+         * Update the screen record before refocusing: stack_top may
+         * find no visible survivor, focus(0) returns untouched, and c
+         * is freed below -- a stale ->current here is a use-after-free
+         * on the next pointer crossing into this screen.
+         */
+        if (c == c->screen->current) {
+                c->screen->current = stack_top(c->screen);
+                focus(c->screen->current);
+        }
 
         free(c);
 }
